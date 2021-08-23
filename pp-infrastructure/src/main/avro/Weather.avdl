@@ -1,0 +1,14 @@
+@namespace("com.worldremit.avro")
+protocol Weather {
+
+  import idl "Common.avdl";
+  import idl "WeatherCategory.avdl";
+
+  record WeatherRecord {
+    Uuid weatherId;
+    LocationTime locationTime;
+    WindDirection windDirection;
+    map<double> features;
+  }
+
+}

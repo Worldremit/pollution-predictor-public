@@ -1,0 +1,23 @@
+@namespace("com.worldremit.avro")
+protocol StatsMap {
+
+  import idl "Common.avdl";
+  import idl "StatsCommon.avdl";
+  import idl "StatsCommonAggregate.avdl";
+
+  record StatsMapAggregate {
+    LocationTime locationTime;
+    map<MeanStdDevAggregate> values;
+  }
+
+  record StatsMapRecord {
+    LocationTime locationTime;
+    map<double> values;
+  }
+
+  record StatsMapResult {
+    LocationTime locationTime;
+    map<MeanStdDev> values;
+  }
+
+}

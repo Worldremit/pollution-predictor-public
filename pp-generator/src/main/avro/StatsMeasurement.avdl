@@ -1,0 +1,13 @@
+@namespace("com.worldremit.avro")
+protocol StatsMeasurement {
+
+  import idl "Common.avdl";
+  import idl "StatsCommon.avdl";
+
+  record MeasurementStatsResult {
+    LocationTime locationTime;
+    map<MeanStdDev> weather;
+    map<MeanStdDev> pollution;
+  }
+
+}

@@ -1,0 +1,170 @@
+server.port: 30400
+
+settings:
+  schema-registry: http://localhost:8081
+  kafka-brokers: localhost:9092
+
+app:
+  trainingFrom: 2013-03-08
+  trainingTo: 2015-03-08
+  trainingBuffer: 365d
+  normalizationThreshold: 3
+
+features:
+  filter:
+    weather: [ "TEMPERATURE", "VISIBILITY", "PRESSURE" ]
+    pollution: [ "PM25", "PM10", "NO2", "CO", "NOX" ]
+    oneHot: [ ]
+  filterNot:
+    weather: [ "WIND_SPEED", "HUMIDITY", "CLOUD_COVER", "RAIN_INTENSITY", "SNOW_INTENSITY" ]
+    pollution: [ "BZN", "NO", "NOX" ]
+    oneHot: [ "SEASON", "DAY_NIGHT", "WIND_DIRECTION" ]
+
+toggles:
+  pollutionDeduplication: true
+  weatherDeduplication: true
+  pollution: true
+  weather: true
+  measurement: true
+  normalizer: true
+  weatherMeanStdDev: false
+  pollutionMeanStdDev: false
+  measurementStats: true
+  globalStats: true
+  correlationPm25Pm10: false
+  correlationTempPressure: false
+  correlationPm25Pressure: false
+
+streams:
+  default: &default-stream
+    commit-interval-ms: 0
+
+  weatherMeanStdDev: { <<: *default-stream }
+  pollutionMeanStdDev: { <<: *default-stream }
+  measurementStats: { <<: *default-stream }
+
+
+topics:
+  pollutions-raw: pollutions-raw
+  weathers-raw: weathers-raw
+  pollutions-deduplicated: pollutions-deduplicated
+  weathers-deduplicated: weathers-deduplicated
+  pollutions: pollutions
+  weathers: weathers
+
+  pollutions-mean-stddev: pollutions-mean-stddev
+  weathers-mean-stddev: weathers-mean-stddev
+  measurement-stats: measurement-stats
+  global-stats: global-stats
+
+  measurements: measurements
+  measurements-normalized: measurements-normalized
+
+  # TODO: one correlation
+  correlations-pm25-pm10: correlations-pm25-pm10
+  correlations-temp-pressure: correlations-temp-pressure
+  correlations-pm25-pressure: correlations-pm25-pressure
+
+logging.level:
+  com.worldremit.normalizer.NormalizerTopology: info
+  com.worldremit.normalizer.NormalizerTransformer: info
+  com.worldremit.deduplication.DeduplicationTransformer: info
+
+spring:
+  application.name: data-preparation
+  profiles.active: local
+
+  kafka:
+    properties:
+      schema.registry.url: ${settings.schema-registry}
+    producer:
+      key-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer
+      value-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer
+
+spring.cloud.stream:
+
+  function.definition: >
+    pollutionDeduplication,
+    weatherDeduplication,
+    pollution,
+    weather,
+    measurement,
+    normalizer,
+    weatherMeanStdDev,
+    pollutionMeanStdDev,
+    measurementStats,
+    globalStats,
+    correlationPm25Pm10,
+    correlationTempPressure,
+    correlationPm25Pressure,
+
+  kafka.streams.binder:
+    brokers: ${settings.kafka-brokers}
+    configuration:
+      default:
+        key.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+        value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+        timestamp.extractor: com.worldremit.config.CustomTimestampExtractor
+      schema.registry.url: ${settings.schema-registry}
+      commit.interval.ms: 100
+      auto.offset.reset: earliest
+      processing.guarantee: at_least_once
+
+    functions:
+      pollutionDeduplication.application-id: pollution-deduplication
+      weatherDeduplication.application-id: weather-deduplication
+      pollution.application-id: pollution
+      weather.application-id: weather
+      measurement.application-id: measurement
+      normalizer.application-id: normalizer
+
+      weatherMeanStdDev.application-id: weather-mean-stddev
+      pollutionMeanStdDev.application-id: pollution-mean-stddev
+      measurementStats.application-id: measurement-stats
+      globalStats.application-id: global-stats
+      correlationPm25Pm10.application-id: correlation-pm25-pm10
+      correlationTempPressure.application-id: correlation-temp-pressure
+      correlationPm25Pressure.application-id: correlation-pm25-pressure
+
+  bindings:
+
+    pollutionDeduplication-in-0.destination: ${topics.pollutions-raw}
+    pollutionDeduplication-out-0.destination: ${topics.pollutions-deduplicated}
+
+    weatherDeduplication-in-0.destination: ${topics.weathers-raw}
+    weatherDeduplication-out-0.destination: ${topics.weathers-deduplicated}
+
+    pollution-in-0.destination: ${topics.pollutions-deduplicated}
+    pollution-out-0.destination: ${topics.pollutions}
+
+    weather-in-0.destination: ${topics.weathers-deduplicated}
+    weather-out-0.destination: ${topics.weathers}
+
+    measurement-in-0.destination: ${topics.weathers}
+    measurement-in-1.destination: ${topics.pollutions}
+    measurement-out-0.destination: ${topics.measurements}
+
+    normalizer-in-0.destination: ${topics.measurements}
+    normalizer-in-1.destination: ${topics.global-stats}
+    normalizer-out-0.destination: ${topics.measurements-normalized}
+
+    pollutionMeanStdDev-in-0.destination: ${topics.pollutions}
+    pollutionMeanStdDev-out-0.destination: ${topics.pollutions-mean-stddev}
+
+    weatherMeanStdDev-in-0.destination: ${topics.weathers.name}
+    weatherMeanStdDev-out-0.destination: ${topics.weathers-mean-stddev}
+
+    measurementStats-in-0.destination: ${topics.measurements}
+    measurementStats-out-0.destination: ${topics.measurement-stats}
+
+    globalStats-in-0.destination: ${topics.measurement-stats}
+    globalStats-out-0.destination: ${topics.global-stats}
+
+    correlationPm25Pm10-in-0.destination: ${topics.measurements}
+    correlationPm25Pm10-out-0.destination: ${topics.correlations-pm25-pm10}
+
+    correlationTempPressure-in-0.destination: ${topics.measurements}
+    correlationTempPressure-out-0.destination: ${topics.correlations-temp-pressure}
+
+    correlationPm25Pressure-in-0.destination: ${topics.measurements}
+    correlationPm25Pressure-out-0.destination: ${topics.correlations-pm25-pressure}

@@ -1,0 +1,15 @@
+@namespace("com.worldremit.avro")
+protocol StatsCommon {
+
+  record MeanStdDev {
+    double mean;
+    double stdDev;
+  }
+
+  record CorrelationResult {
+  //    string featureX;
+  //    string featureY;
+    double value;
+  }
+
+}

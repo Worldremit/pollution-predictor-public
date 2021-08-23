@@ -1,0 +1,19 @@
+@namespace("com.worldremit.avro")
+protocol Prediction {
+
+  import idl "MeasurementNormalized.avdl";
+  import idl "ClusterCommon.avdl";
+
+  record PredictedPattern {
+    FeaturesDescription featuresDescription;
+    array<double> features;
+  }
+
+  record Predicted {
+    LocationTime locationTime;
+    MeasurementNormalized initialMeasurement;
+    map<PredictedPattern> predictedPatterns;
+    long modelMaturityHours;
+  }
+
+}

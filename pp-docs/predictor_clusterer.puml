@@ -1,0 +1,99 @@
+@startuml 
+
+!include https://raw.githubusercontent.com/jrosiek/plantuml-extensions/master/puml_ext.iuml
+!include <cloudinsight/kafka>
+
+$puml_ext_include(component/kafka-topic-component.iuml)
+
+!unquoted procedure kafka_topic($id, $name, $key="", $payload="", $compacted="")
+    !$keyico = "<$octicon16_key>"
+    !$payloadico = "<$octicon16_file_binary>"
+    !$compactico = "<$octicon16_versions>"
+    !$kafkaico = "<$logo24_apache_kafka>"
+
+    queue $id [
+            $kafkaico **$name**
+'            <$kafka{scale=0.4}> **$name**
+        !if ($compacted == "compacted" || $key != "" || $payload != "")
+            ----
+        !endif
+        !if ($compacted == "compacted")
+            $compactico compacted
+        !endif
+        !if ($key != "")
+            $keyico $key
+        !endif
+        !if ($payload != "")
+            $payloadico $payload
+        !endif
+    ]
+!endprocedure
+
+!unquoted procedure state_store($id, $name, $key="", $payload="", $compacted="")
+    !$keyico = "<$octicon16_key>"
+    !$payloadico = "<$octicon16_file_binary>"
+    !$compactico = "<$octicon16_versions>"
+    !$kafkaico = "<$logo24_apache_kafka>"
+
+    database $id [
+            $kafkaico **$name**
+'            <$kafka{scale=0.4}> **$name**
+        !if ($compacted == "compacted" || $key != "" || $payload != "")
+            ----
+        !endif
+        !if ($compacted == "compacted")
+            $compactico compacted
+        !endif
+        !if ($key != "")
+            $keyico $key
+        !endif
+        !if ($payload != "")
+            $payloadico $payload
+        !endif
+    ]
+!endprocedure
+
+skinparam Monochrome true
+
+skinparam component {
+    BackgroundColor<<new>> lightgray
+}
+
+package "Predictor / Clusterer" {
+
+    kafka_topic(TMN, measurements-normalized, Location, MeasurementNormalized)
+    kafka_topic(TP, predictions, Location, Predicted)
+    kafka_topic(TAP, actual-vs-predictions, Location, ConfusionRecord)
+    kafka_topic(TM, models, Location, KmeansModels)
+    kafka_topic(TF, forecasts, Location, Forecast)
+    kafka_topic(TA, accuracies, Location, MeanStdDevResult)
+
+    component "Predictor" as SP
+    component "Matcher" as SM
+    component "Forecaster" as SF
+    component "Accuracy" as SA
+    component "Clusterer" as SC
+
+    state_store(STMO, models, Location, KmeansModels)
+    state_store(STCM, matcher-join-store, LocationTime)
+
+    TMN --> SP
+    TMN --> SM
+    SP --> TP
+    SP -left-> STMO
+    TP --> SF
+    TP --> SM
+    SM --> TAP
+    SM --> STCM
+    SF --> TF
+    TAP --> SC
+    SC --> TM
+    TM --> SP
+    TAP --> SA
+    SA --> TA
+
+
+}
+
+
+@enduml

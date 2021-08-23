@@ -1,0 +1,31 @@
+@namespace("com.worldremit.avro")
+protocol StatsCommonAggregate {
+
+  record AverageAggregate {
+    long count;
+    double sum;
+  }
+
+  record StdDevAggregate {
+    double mean;
+    double variance;
+    long counter;
+  }
+
+  record MeanStdDevAggregate {
+    AverageAggregate mean;
+    StdDevAggregate stdDev;
+  }
+
+  record CorrelationAggregate {
+    double sumX;
+    double sumY;
+    double xMean;
+    double yMean;
+    double sumXx; // total variation in x
+    double sumYy; // total variation in y
+    double sumXy; // sum of products
+    long n;
+  }
+
+}

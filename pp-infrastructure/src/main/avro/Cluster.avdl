@@ -1,0 +1,29 @@
+@namespace("com.worldremit.avro")
+protocol Cluster {
+
+  import idl "Common.avdl";
+  import idl "ClusterCommon.avdl";
+
+  record ClusterCenter {
+    double weight;
+    array<double> coordinates;
+  }
+
+  record ClusterParams {
+    long processedDataPoints;
+    int clustersEstimated;
+    double distanceCutoff;
+  }
+
+  record KmeansModel {
+    ClusterParams clusterParams;
+    FeaturesDescription featuresDescription;
+    array<ClusterCenter> clusterCenters;
+  }
+
+  record KmeansModels {
+    LocationTime locationTime;
+    map<KmeansModel> models; // per target feature
+  }
+
+}

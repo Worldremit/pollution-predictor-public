@@ -1,0 +1,18 @@
+@namespace("com.worldremit.avro")
+protocol Measurement {
+
+  import idl "Common.avdl";
+  import idl "CommonCategory.avdl";
+  import idl "WeatherCategory.avdl";
+
+  record Measurement {
+    Uuid measurementId;
+    LocationTime locationTime;
+    DayNight dayNight;
+    Season season;
+    WindDirection windDirection;
+    map<double> weatherFeatures;
+    map<double> pollutionFeatures;
+  }
+
+}

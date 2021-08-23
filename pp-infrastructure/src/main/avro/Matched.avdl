@@ -1,0 +1,11 @@
+@namespace("com.worldremit.avro")
+protocol Matched {
+
+  import idl "Prediction.avdl";
+
+  record MatchedRecord {
+    Predicted predicted;
+    MeasurementNormalized actual;
+  }
+
+}

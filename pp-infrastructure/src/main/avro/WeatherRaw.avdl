@@ -1,0 +1,40 @@
+@namespace("com.worldremit.avro")
+protocol WeatherRaw {
+
+  import idl "Common.avdl";
+
+  record SolarRaw {
+    union{null, int} azimuth = null; // [56...300]
+    union{null, int} altitude = null; // [1..63]
+    union{null, int} dni = null; // [0..910]
+    union{null, int} ghi = null; // [0..893]
+    union{null, double} dhi = null; // [0-81.2]
+    union{null, double} etr = null; // [1316-1407]
+  }
+
+  record WeatherRawData { // WeatherRawDarkSky
+    union{null, string} icon = null; // summary
+    union{null, double} temperature = null; // [-26...37]
+    union{null, double} temperatureApparent = null;
+    union{null, double} dewPoint = null;
+    union{null, double} humidity = null; // 0..1
+    union{null, double} pressure = null; // 0..1045
+    union{null, double} windSpeed = null; // 0..102
+    union{null, double} windGust = null; // 0..102
+    union{null, int} windDirection = null; // [0...359]
+    union{null, double} cloudCover = null; // 0..1
+    union{null, double} precipitationIntensity = null; // 0..72
+    union{null, double} precipitationProbability = null;
+    union{null, string} precipitationType = null; // rain, snow
+    union{null, int} uvIndex = null; // [0...9]
+    union{null, double} visibility = null; // 0..16
+    union{null, SolarRaw} solar = null;
+  }
+
+  record WeatherRaw {
+    Uuid weatherId;
+    LocationTime locationTime;
+    WeatherRawData data;
+  }
+
+}

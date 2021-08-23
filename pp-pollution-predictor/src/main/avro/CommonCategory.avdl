@@ -1,0 +1,16 @@
+@namespace("com.worldremit.avro")
+protocol CommonCategory {
+
+  enum Season {
+    WINTER, // XII-II
+    SPRING, // III-V
+    SUMMER, // VI-VIII
+    AUTUMN // IX-XI
+  }
+
+  enum DayNight {
+    DAY,
+    NIGHT
+  }
+
+}

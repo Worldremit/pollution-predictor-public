@@ -1,0 +1,4 @@
+#/usr/bin/env bash
+
+cloc . --include-lang=Kotlin,YAML,Gradle
+

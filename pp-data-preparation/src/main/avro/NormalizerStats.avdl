@@ -1,0 +1,11 @@
+@namespace("com.worldremit.avro")
+protocol NormalizerStats {
+
+  import idl "StatsMeasurement.avdl";
+
+  record NormalizerStats {
+    MeasurementStatsResult globalStats;
+    boolean processedTrainingMeasurements;
+  }
+
+}

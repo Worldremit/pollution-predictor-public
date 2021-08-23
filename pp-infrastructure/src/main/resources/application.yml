@@ -1,0 +1,77 @@
+server.port: 30200
+
+settings:
+  schema-registry: http://localhost:8081
+  kafka-brokers: localhost:9092
+
+app:
+
+  default:
+    partitions: 3
+    replicas: 1
+    retention: -1ms
+#    maxCompactionLag: 60s
+    deleteRetention: 6000d
+
+  topics: # TODO: sync topics !!!
+
+    pollutions-raw.name: pollutions-raw
+    weathers-raw.name: weathers-raw
+
+    pollutions-deduplicated.name: pollutions-deduplicated
+    weathers-deduplicated.name: weathers-deduplicated
+
+    pollutions.name: pollutions
+    weathers.name: weathers
+
+    pollutions-mean-stddev: { name: pollutions-mean-stddev, cleanup-policy: "delete,compact" }
+    weathers-mean-stddev: { name: weathers-mean-stddev, cleanup-policy: "delete,compact" }
+    measurements-mean-stdedv: { name: measurements-mean-stdedv, cleanup-policy: "delete,compact" }
+    global-stats: { name: global-stats, cleanup-policy: "compact" }
+
+    normalizer-measurement-training-store-changelog: { name: normalizer-measurement-training-store-changelog, cleanup-policy: "delete" } # compacted?
+    normalizer-normalizer-stats-store-changelog: { name: normalizer-normalizer-stats-store-changelog, cleanup-policy: "delete" } #compacted
+
+    measurements.name: measurements
+    measurements-normalized.name: measurements-normalized
+
+    predictions.name: predictions
+    forecasts.name: forecasts
+    predictions-vs-actuals.name: predictions-vs-actuals
+    confusions.name: confusions
+    accuracies.name: accuracies
+    models.name: models
+
+    model-delay-stats: { name: model-delay-stats, cleanup-policy: "delete,compact" }
+
+    correlations-pm25-pm10: { name: correlations-pm25-pm10, cleanup-policy: "delete,compact" }
+    correlations-temp-pressure: { name: correlations-temp-pressure, cleanup-policy: "delete,compact" }
+    correlations-pm25-pressure: { name: correlations-pm25-pressure, cleanup-policy: "delete,compact" }
+
+# repartition, changelog
+
+    correlation-pm25-pm10-correlation-store-changelog: { name: correlation-pm25-pm10-correlation-store-changelog, cleanup-policy: "delete,compact" }
+    correlation-pm25-pressure-correlation-store-changelog: { name: correlation-pm25-pressure-correlation-store-changelog, cleanup-policy: "delete,compact" }
+    correlation-temp-pressure-correlation-store-changelog: { name: correlation-temp-pressure-correlation-store-changelog, cleanup-policy: "delete,compact" }
+
+    measurement-measurement-store-other-join-store-changelog: { name: measurement-measurement-store-other-join-store-changelog, cleanup-policy: "compact" }
+    measurement-measurement-store-this-join-store-changelog: { name: measurement-measurement-store-this-join-store-changelog, cleanup-policy: "compact" }
+
+    pollution-mean-stddev-store-changelog: { name: pollution-mean-stddev-mean-stddev-store-changelog, cleanup-policy: "delete,compact" }
+    weather-mean-stddev-store-changelog: { name: weather-mean-stddev-mean-stddev-store-changelog, cleanup-policy: "delete,compact" }
+
+    pollution-deduplication-pollution-deduplication-store-changelog: { name: pollution-deduplication-pollution-deduplication-store-changelog, cleanup-policy: "delete,compact" }
+    weather-deduplication-weather-deduplication-store-changelog: { name: weather-deduplication-weather-deduplication-store-changelog, cleanup-policy: "delete,compact" }
+
+logging.level:
+  root: warn
+  com.worldremit.config.TopicsConfiguration: info
+
+spring:
+  application.name: infrastructure
+  profiles.active: local
+  main.banner-mode: "off"
+
+  kafka.properties:
+    schema.registry.url: ${settings.schema-registry}
+    bootstrap-servers: ${settings.kafka-brokers}

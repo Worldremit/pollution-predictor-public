@@ -1,0 +1,8 @@
+@namespace("com.worldremit.avro")
+protocol Deduplication {
+
+  record DeduplicationRecord {
+    boolean duplicated;
+  }
+
+}

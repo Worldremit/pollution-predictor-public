@@ -1,0 +1,37 @@
+server.port: 30300
+
+app:
+  scheduler:
+    enabled: true
+    initDelayMs: 5000
+    periodMs: 2000
+#    periodMs: 10
+
+  generator:
+    loadType: raw # normalized
+#    loadType: normalized # normalized
+#    startDate: 2015-03-01
+    startDate: 2015-03-06
+    timeShift: 6h
+#    timeShift: 1h
+    locations:
+      - { lat: 50.057678, lon: 19.926189 }
+#      - { lat: 10.0, lon: 10.0 }
+#      - { lat: 15.0, lon: 15.0 }
+
+settings:
+  schema-registry: http://localhost:8081
+  kafka-brokers: localhost:9092
+
+spring:
+  application.name: generator
+  profiles.active: local
+
+  kafka:
+    properties:
+      schema.registry.url: ${settings.schema-registry}
+      auto.register.schemas: true
+      bootstrap-servers: ${settings.kafka-brokers}
+    producer:
+      key-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer
+      value-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer

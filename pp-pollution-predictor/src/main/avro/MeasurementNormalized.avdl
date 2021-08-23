@@ -1,0 +1,14 @@
+@namespace("com.worldremit.avro")
+protocol MeasurementNormalized {
+
+  import idl "Common.avdl";
+
+  record MeasurementNormalized {
+    Uuid measurementId;
+    LocationTime locationTime;
+    map<double> weatherFeatures;
+    map<double> pollutionFeatures;
+    map<double> oneHotFeatures;
+  }
+
+}

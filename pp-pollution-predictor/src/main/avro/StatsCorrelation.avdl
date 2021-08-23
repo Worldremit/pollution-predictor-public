@@ -1,0 +1,17 @@
+@namespace("com.worldremit.avro")
+protocol StatsCorrelation {
+
+  import idl "StatsCommon.avdl";
+
+  record CorrelationInput {
+    union{null, double} featureX = null;
+    union{null, double} featureY = null;
+  }
+
+  record MeasurementCorrelation {
+  // TODO: TBD
+    map<CorrelationResult> weatherWeather;
+    map<CorrelationResult> pollutionWeather;
+  }
+
+}

@@ -1,0 +1,48 @@
+server.port: 30300
+
+spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: pp
+
+topics:
+  pollutions-raw.name: pollutions-raw
+  weathers-raw.name: weathers-raw
+
+logging.level:
+  com.worldremit.dataloader.Loader: debug
+
+loader:
+
+  init:
+    queryFrom: 2013-03-08
+    queryTo: 2015-04-08
+    delayElements: 10ms
+
+  regular:
+    queryFrom: 2015-04-08
+    queryTo: 2020-01-01
+    delayElements: 50ms
+
+  filteredLocations:
+    - latitude: 50.057678
+      longitude: 19.926189
+
+etl:
+  weather:
+    collection: weather-darksky-hourly
+    topic: ${topics.weathers-raw.name}
+  pollution:
+    collection: pollution-wios-hourly
+    topic: ${topics.pollutions-raw.name}
+
+
+spring.kafka:
+  bootstrap-servers: localhost:9092
+  properties:
+    schema.registry.url: http://localhost:8081
+  producer:
+    key-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer
+    value-serializer: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerializer
+
+

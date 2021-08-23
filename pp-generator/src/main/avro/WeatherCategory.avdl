@@ -1,0 +1,14 @@
+@namespace("com.worldremit.avro")
+protocol WeatherCategory {
+
+  enum PrecipitationType {
+    RAIN, SNOW, NONE, UNKNOWN // SLEET, HAIL
+  }
+
+  enum WindDirection {
+    N, NE, E, SE, S, SW, W, NW,
+    NONE, // no occurrence
+    UNKNOWN // error, no measurement
+  }
+
+}

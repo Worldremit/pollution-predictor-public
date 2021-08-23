@@ -1,0 +1,76 @@
+@startuml 
+
+!include https://raw.githubusercontent.com/jrosiek/plantuml-extensions/master/puml_ext.iuml
+!include <cloudinsight/kafka>
+
+$puml_ext_include(component/kafka-topic-component.iuml)
+
+!unquoted procedure kafka_topic($id, $name, $key="", $payload="", $compacted="")
+    !$keyico = "<$octicon16_key>"
+    !$payloadico = "<$octicon16_file_binary>"
+    !$compactico = "<$octicon16_versions>"
+    !$kafkaico = "<$logo24_apache_kafka>"
+
+    queue $id [
+            $kafkaico **$name**
+'            <$kafka{scale=0.4}> **$name**
+        !if ($compacted == "compacted" || $key != "" || $payload != "")
+            ----
+        !endif
+        !if ($compacted == "compacted")
+            $compactico compacted
+        !endif
+        !if ($key != "")
+            $keyico $key
+        !endif
+        !if ($payload != "")
+            $payloadico $payload
+        !endif
+    ]
+!endprocedure
+
+skinparam Monochrome true
+
+skinparam component {
+    BackgroundColor<<new>> lightgray
+}
+
+package "High Level" {
+
+    kafka_topic(TPR, pollutions-raw, Location, PollutionRaw)
+    kafka_topic(TWR, weathers-raw, Location, WeatherRaw)
+    kafka_topic(TP, predictions, Location, Predicted)
+    kafka_topic(TM, models, Location, KmeansModels)
+    kafka_topic(TMN, measurements-normalized, Location, MeasurementNormalized)
+    kafka_topic(TGS, global-stats, Location, MeasurementMeanStdDevResult, compacted)
+
+    component "Data Scrapper" as SDS
+    component "Data Preparation" as SDP
+    component "Predictor / Clusterer" as SPC
+    component "Test Load Generator" as SLG
+    component "Data Loader" as SDL
+    database "Offline data" as DO
+
+
+'    start --> DO
+    SDS --> DO
+    SDL --> DO : read
+    SDL --> TPR
+    SDL --> TWR
+    TPR --> SDP
+    TWR --> SDP
+    SDP --> TMN
+    SDP --> TGS
+    TGS --> SPC
+    TMN --> SPC
+    SPC --> TP
+    SPC --> TM
+    SLG --> TWR
+    SLG -> TPR
+'    SLG --> TMN
+    TM --> SPC
+
+}
+
+
+@enduml

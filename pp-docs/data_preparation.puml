@@ -1,0 +1,136 @@
+@startuml 
+
+!include https://raw.githubusercontent.com/jrosiek/plantuml-extensions/master/puml_ext.iuml
+!include <cloudinsight/kafka>
+
+$puml_ext_include(component/kafka-topic-component.iuml)
+
+!unquoted procedure kafka_topic($id, $name, $key="", $payload="", $compacted="")
+    !$keyico = "<$octicon16_key>"
+    !$payloadico = "<$octicon16_file_binary>"
+    !$compactico = "<$octicon16_versions>"
+    !$kafkaico = "<$logo24_apache_kafka>"
+
+    queue $id [
+            $kafkaico **$name**
+'            <$kafka{scale=0.4}> **$name**
+        !if ($compacted == "compacted" || $key != "" || $payload != "")
+            ----
+        !endif
+        !if ($compacted == "compacted")
+            $compactico compacted
+        !endif
+        !if ($key != "")
+            $keyico $key
+        !endif
+        !if ($payload != "")
+            $payloadico $payload
+        !endif
+    ]
+!endprocedure
+
+!unquoted procedure state_store($id, $name, $key="", $payload="", $compacted="")
+    !$keyico = "<$octicon16_key>"
+    !$payloadico = "<$octicon16_file_binary>"
+    !$compactico = "<$octicon16_versions>"
+    !$kafkaico = "<$logo24_apache_kafka>"
+
+    database $id [
+            $kafkaico **$name**
+'            <$kafka{scale=0.4}> **$name**
+        !if ($compacted == "compacted" || $key != "" || $payload != "")
+            ----
+        !endif
+        !if ($compacted == "compacted")
+            $compactico compacted
+        !endif
+        !if ($key != "")
+            $keyico $key
+        !endif
+        !if ($payload != "")
+            $payloadico $payload
+        !endif
+    ]
+!endprocedure
+
+skinparam Monochrome true
+
+skinparam component {
+    BackgroundColor<<new>> lightgray
+}
+
+package "Data Preparation" {
+
+    kafka_topic(TPR, pollutions-raw, Location, PollutionRaw)
+    kafka_topic(TWR, weathers-raw, Location, WeatherRaw)
+
+    kafka_topic(TPD, pollutions-deduplicated, Location, PollutionRaw, compacted)
+    kafka_topic(TWD, weathers-deduplicated, Location, WeatherRaw, compacted)
+
+    kafka_topic(TWE, weathers, Location, WeatherRecord)
+    kafka_topic(TPO, pollutions, Location, PollutionRecord)
+
+'    kafka_topic(TWS, weathers-mean-stddev, Location, MeanStdDevResult, compacted)
+'    kafka_topic(TPS, pollutions-mean-stddev, Location, MeanStdDevResult, compacted)
+    kafka_topic(TMS, measurement-mean-stddev, Location, MeasurementMeanStdDevResult, compacted)
+
+    kafka_topic(TM, measurements, Location, Measurement)
+    kafka_topic(TMN, measurements-normalized, Location, MeasurementNormalized)
+
+    kafka_topic(TC_PM25_PR, correlations-pm25-pressure, Location, CorrelationResult, compacted)
+
+    component "Weather" as SW
+    component "Pollution" as SP
+    component "Weather Deduplication" as SWD
+    component "Pollution Deduplication" as SPD
+    component "Pollution" as SP
+    component "Measurement" as SM
+    component "Normalizer" as SN
+'    component "Weather stats" as SWS
+'    component "Pollution stats" as SPS
+    component "Measurement stats" as SMS
+    component "Correlations" as SC
+
+    state_store(STPD, pollution-deduplication, LocationTime, DeduplicationRecord)
+    state_store(STWD, weather-deduplication, LocationTime, DeduplicationRecord)
+'    state_store(STPMS, pollution-mean-stddev, Location, MeanStdDevAggregates)
+'    state_store(STWMS, weather-mean-stddev, Location, MeanStdDevAggregates)
+    state_store(STMS, measurement-mean-stddev, Location, MeanStdDevAggregates)
+    state_store(STC_PM25_PR, correlation-pm25-pressure, Location, CorrelationAggregate)
+    state_store(STM, measurement, LocationTime)
+
+    TPR --> SPD
+    TWR --> SWD
+    SPD --> TPD
+    SWD --> TWD
+    SPD --> STPD
+    SWD --> STWD
+    TPD --> SP
+    TWD --> SW
+    SW -right-> TWE
+    SP -left-> TPO
+    SM --> TM
+    SM -right-> STM
+    TM --> SN
+    SN --> TMN
+'    TWE --> SWS
+'    TPO --> SPS
+    TWE --> SM
+    TPO --> SM
+    TM ..> SC
+    TM --> SMS
+    SMS --> TMS
+    SMS -left-> STMS
+    TMS --> SN
+'    SWS --> TWS
+'    SPS --> TPS
+'    SWS --> STWMS
+'    SPS --> STPMS
+'    SC ..> TC_PM25_PR
+'    SC ..> STC_PM25_PR
+
+
+}
+
+
+@enduml

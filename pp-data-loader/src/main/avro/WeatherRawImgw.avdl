@@ -1,0 +1,140 @@
+@namespace("com.worldremit.avro")
+protocol Pollution {
+
+  import idl "Common.avdl";
+
+  enum ObservationStatus {
+    OK,
+    NONE, // = NO_OCCURRENCE
+    UNKNOWN // = NO_MEASUREMENT, ERROR
+  }
+
+  record WeatherRawImgwData {
+
+    union{null, double} meanDailyCloudCover = null; // [okta] // NOS
+    union{null, string} meanDailyCloudCoverStatus = null;
+
+    union{null, double} meanDailyWindSpeed = null;  // [m/s] // FWS
+    union{null, string} meanDailyWindSpeedStatus = null;
+
+    union{null, double} meanDailyTemp = null;  // ['C] // TEMP
+    union{null, string} meanDailyTempStatus = null;
+
+    union{null, double} meanDailyPressureWaterVapor = null;  // [hPa] // CPW
+    union{null, string} meanDailyPressureWaterVaporStatus = null;
+
+    union{null, double} meanDailyHumidityRelative = null;  // [%] // WLGS
+    union{null, string} meanDailyHumidityRelativeStatus = null;
+
+    union{null, double} meanDailyPressureStationLevel = null;  // [hPa] // PPPS
+    union{null, string} meanDailyPressureStationLevelStatus = null;
+
+    union{null, double} meanDailyPressureSeaLevel = null;  // [hPa] // PPPM
+    union{null, string} meanDailyPressureSeaLevelStatus = null;
+
+    union{null, double} precipitationSumDay = null;  // [mm] // WODZ
+    union{null, string} precipitationSumDayStatus = null;
+
+    union{null, double} precipitationSumNigh = null;  // [mm] // WONO
+    union{null, string} precipitationSumNighStatus = null;
+
+    union{null, double} tempMaxDaily = null;  // ['C] // TMAX
+    union{null, string} tempMaxDailyStatus = null;
+
+    union{null, double} tempMinDaily = null;  // ['C] // TMIN
+    union{null, string} tempMinDailyStatus = null;
+
+    union{null, double} tempMeanDaily = null;  // ['C] // SDT
+    union{null, string} tempMeanDailyStatus = null;
+
+    union{null, double} tempMinGround = null;  // ['C] // TMNG
+    union{null, string} tempMinGroundStatus = null;
+
+    union{null, double} precipitationSumDaily = null;  // [mm] // SMDB
+    union{null, string} precipitationSumDailyStatus = null;
+
+    union{null, string} precipitationType = null; // [S/W/ ]
+
+    union{null, double} snowCoverHeight = null;  // [cm] // PKSN
+    union{null, string} snowCoverHeightStatus = null;
+
+    union{null, double} snowWaterEquivalent = null;  // [mm/cm] // RWSN
+    union{null, string} snowWaterEquivalentStatus = null;
+
+    union{null, double} sunshineDuration = null;  // [h] // USL
+    union{null, string} sunshineDurationStatus = null;
+
+    union{null, double} precipitationDurationRain = null;  // [h] // DESZ
+    union{null, string} precipitationDurationRainStatus = null;
+
+    union{null, double} precipitationDurationSnow = null;  // [h] // SNEG
+    union{null, string} precipitationDurationSnowStatus = null;
+
+    union{null, double} precipitationDurationRainAndSnow = null;  // [h] // DISN
+    union{null, string} precipitationDurationRainAndSnowStatus = null;
+
+    union{null, double} precipitationDurationHail = null;  // [h] // GRAD
+    union{null, string} precipitationDurationHailStatus = null;
+
+    union{null, double} durationFog = null;  // [h] // MGLA
+    union{null, string} durationFogStatus = null;
+
+    union{null, double} durationMist = null; // [h] // ZMGL // zamglenie
+    union{null, string} durationMistStatus = null;
+
+    union{null, double} durationRimeIce = null; // [h] // SADZ
+    union{null, string} durationRimeIceStatus = null;
+
+    union{null, double} durationBlackIce = null; // [h] // GOLO
+    union{null, string} durationBlackIceStatus = null;
+
+    union{null, double} durationGroundBlizzardLow = null; // [h] // ZMNI
+    union{null, string} durationGroundBlizzardLowStatus = null;
+
+    union{null, double} durationGroundBlizzardHigh = null; // [h] // ZMWS
+    union{null, string} durationGroundBlizzardHighStatus = null;
+
+    union{null, double} durationHaze = null; // [h] // ZMET // zmetnienie (dust, smoke, etc.)
+    union{null, string} durationHazeStatus = null;
+
+    union{null, double} durationWind10 = null; // [h] // FF10 // >=10m/s
+    union{null, string} durationWind10Status = null;
+
+    union{null, double} durationWind15 = null; // [h] // FF15 // >15m/s
+    union{null, string} durationWind15Status = null;
+
+    union{null, double} durationThunderstorm = null; // [h] // BRZA
+    union{null, string} durationThunderstormStatus = null;
+
+    union{null, double} durationDew = null; // [h] // ROSA
+    union{null, string} durationDewStatus = null;
+
+    union{null, double} durationFrost = null; // [h] // SZRO
+    union{null, string} durationFrostStatus = null;
+
+    union{null, boolean} occurrenceSnowCover = null; // [0/1] // DZPS
+    union{null, string} occurrenceSnowCoverStatus = null;
+
+    union{null, boolean} occurrenceLightning = null; // [0/1] // DZBL
+    union{null, string} occurrenceLightningStatus = null;
+
+    union{null, string} groundState = null; // [Z/R]
+
+    union{null, double} isothermLow = null; // [cm] // IZD
+    union{null, string} isothermLowStatus = null;
+
+    union{null, double} isothermHigh = null; // [cm] // IZG
+    union{null, string} isothermHighStatus = null;
+
+    union{null, double} irradiance = null; // [J/cm2] // AKTN, Aktynometria?
+    union{null, string} irradianceStatus = null;
+  }
+
+  record WeatherRawImgw {
+    Uuid weatherId;
+    LocationTime locationTime;
+    WeatherRawImgwData data;
+  }
+
+
+}

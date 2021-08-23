@@ -1,0 +1,18 @@
+@namespace("com.worldremit.avro")
+protocol Common {
+
+  record Location {
+    double latitude;
+    double longitude;
+  }
+
+  record Uuid {
+    string value;
+  }
+
+  record LocationTime {
+    Location location;
+    long timestamp; // epochMilli
+  }
+
+}

@@ -1,0 +1,10 @@
+@namespace("com.worldremit.avro")
+protocol ClusterCommon {
+
+  record FeaturesDescription {
+    array<string> weather;
+    array<string> oneHot; // extended
+    string target; // pollution
+  }
+
+}

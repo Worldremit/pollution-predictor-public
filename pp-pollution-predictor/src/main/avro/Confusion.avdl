@@ -1,0 +1,26 @@
+@namespace("com.worldremit.avro")
+protocol Confusion {
+
+  import idl "MeasurementNormalized.avdl";
+
+// Levels based on AQI (NAAQS): (0,50) Good, (50-100) Moderate, (100+) Unhealthy
+  enum Level {
+    GOOD, MODERATE, UNHEALTHY
+  }
+
+  record ConfusionFeature {
+    Level predicted;
+    Level actual;
+  }
+
+  record ConfusionRecord {
+    LocationTime locationTime;
+    map<ConfusionFeature> matrix;
+  }
+
+  record Forecast {
+    LocationTime locationTime;
+    map<Level> predictions;
+  }
+
+}

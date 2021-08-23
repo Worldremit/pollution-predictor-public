@@ -1,0 +1,13 @@
+@namespace("com.worldremit.avro")
+protocol Pollution {
+
+  import idl "Common.avdl";
+
+  record PollutionRecord {
+    Uuid pollutionId;
+    LocationTime locationTime;
+    map<double> features;
+  // TODO: add time diff model vs point
+  }
+
+}
