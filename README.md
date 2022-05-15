@@ -1,5 +1,16 @@
 # Pollution Predictor
 
+I encourage everyone to see a [presentation](https://github.com/Worldremit/pollution-predictor-public/blob/master/presentation-devoxx_2021-08-25.pdf) first.
+
+![A main concept!](/pp-docs/main_concept.png)
+
+![Normalization!](/pp-docs/normalization.png)
+
+![Streams!](/pp-docs/streams.png)
+
+![High Level!](/pp-docs/high_level.png)
+
+
 ## How to run?
 
 1. Setup environment (pp-infrastructure):
@@ -25,5 +36,4 @@
 - 8+ GB RAM
 - Linux platform (with small modifications should work on other platforms as well)
 - 7zip, mongodb-tools on PATH
-
 
