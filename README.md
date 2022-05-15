@@ -23,18 +23,20 @@ I encourage everyone to see a [presentation](https://github.com/Worldremit/pollu
 A project was created to show a practical end-to-end example how to deal with online machine learning problems (using Kafka Streams). 
 Its main purpose is to predict pollution level based on historical data and current weather conditions.
 
-
 ### Main concept
 
 A main idea is to compare 'old' predictions (24h ahead) with current measurements. That is an input for clusterization.
 Date models (one per each kafka key) are dynamic, and they change in a streaming way. 
-The beauty of this solution is that we do not need to store all historical measurements. 
-It is enough to just persist coordinates of a cluster with few metrics. 
-We use for that Kafka Streams state stores, which are scalable and durable. 
+The beauty of this solution is that we do not need to store all historical measurements.
+As we may read in a paper: 'Fast and accurate k-means', it is enough to just persist coordinates of a cluster.
+I used for that Kafka Streams' state stores, which are scalable and durable.
+In order to achieve this I had to create a serializable custom implementation of that algorithm (a fork of Mahout's one).
 
 ![A main concept!](/pp-docs/main_concept.png)
 
-
+A solution is quasi-online. 
+We create statistics (e.g. average, standard deviation, correlation) in a streaming fashion, however after a training period passes we use their fixed snapshot for data normalization.
+'A switch' is dynamic and was achieved using a custom Kafka Streams' window store.
 
 ![Normalization!](/pp-docs/normalization.png)
 
@@ -51,25 +53,12 @@ A high level diagram shows a data flow. Arrows represent producers and consumers
 ![High Level!](/pp-docs/high_level.png)
 
 
-## How to run?
-
-1. Setup environment (pp-infrastructure):
-
-    
-    ./gradlew start|stop|restart
-
-2. To generate load either use (pp-generator or pp-data-loader):
-
-
-    ./gradlew bootRun
-
-3. Start the following services:
-- pp-data-preparation
-- pp-pollution-predictor
-
-
-    ./gradlew bootRun
-
+## How to run
+ 
+    pp-infrastructure>      ./gradlew start
+    pp-generator>           ./gradlew bootRun     # or pp-data-loader>
+    pp-data-preparation>    ./gradlew bootRun
+    pp-pollution-predictor> ./gradlew bootRun
 
 ## Requirements
 
