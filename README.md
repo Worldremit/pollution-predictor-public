@@ -20,12 +20,21 @@ I encourage everyone to see a [presentation](https://github.com/Worldremit/pollu
 
 ## Project summary
 
-A project was created to show a practical end-to-end example how to deal with online machine learning problems (using Kafka Streams).  
+A project was created to show a practical end-to-end example how to deal with online machine learning problems (using Kafka Streams). 
 Its main purpose is to predict pollution level based on historical data and current weather conditions.
+
 
 ### Main concept
 
+A main idea is to compare 'old' predictions (24h ahead) with current measurements. That is an input for clusterization.
+Date models (one per each kafka key) are dynamic, and they change in a streaming way. 
+The beauty of this solution is that we do not need to store all historical measurements. 
+It is enough to just persist coordinates of a cluster with few metrics. 
+We use for that Kafka Streams state stores, which are scalable and durable. 
+
 ![A main concept!](/pp-docs/main_concept.png)
+
+
 
 ![Normalization!](/pp-docs/normalization.png)
 
@@ -33,7 +42,7 @@ Its main purpose is to predict pollution level based on historical data and curr
 
 A code is organized around two main JVMs: pp-data-preparation and pp-pollution-predictor. 
 Those are Spring Boot apps combined with Spring Cloud Stream framework. 
-Each app contains several Kafka Streams topologies.
+Each app consists of several Kafka Streams topologies.
 
 ![Streams!](/pp-docs/streams.png)
 
