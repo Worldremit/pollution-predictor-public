@@ -62,7 +62,7 @@ A high level diagram shows a data flow. Arrows represent producers and consumers
 
 ## Requirements
 
-- 8+ GB RAM ()
-- Linux platform (with small modifications should work on other platforms as well)
-- 7zip, mongodb-tools on PATH
+- 8+ GB RAM
+- recommended Linux platform
+- 7zip, mongodb-tools on a PATH
 
